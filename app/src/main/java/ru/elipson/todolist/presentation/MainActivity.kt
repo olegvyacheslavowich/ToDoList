@@ -16,9 +16,8 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[ToDoListViewModel::class.java]
         viewModel.toDoListLiveData.observe(this) { list ->
             Log.d("MainActivity", list.toString())
+            viewModel.deleteToDoItem(list.first())
         }
-
-        viewModel.loadToDoList()
 
     }
 }

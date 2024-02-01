@@ -17,23 +17,16 @@ class ToDoListViewModel : ViewModel() {
     private val deleteToDoItemUseCase = DeleteToDoItemUseCase(toDoListRepository)
     private val editToDoListUseCase = EditToDoItemUseCase(toDoListRepository)
 
-    private val _toDoListLiveData = MutableLiveData<List<ToDoItem>>()
-    val toDoListLiveData: LiveData<List<ToDoItem>> get() = _toDoListLiveData
-
-    fun loadToDoList() {
-        _toDoListLiveData.value = getToDoListUseCase.getToDoList()
-    }
+   val toDoListLiveData = getToDoListUseCase.getToDoList()
 
     fun deleteToDoItem(item: ToDoItem) {
         deleteToDoItemUseCase.deleteToDoItem(item)
-        loadToDoList()
     }
 
     fun changeEnabled(item: ToDoItem) {
         editToDoListUseCase.editToDoItem(
             item.copy(enabled = !item.enabled)
         )
-        loadToDoList()
     }
 
 }
