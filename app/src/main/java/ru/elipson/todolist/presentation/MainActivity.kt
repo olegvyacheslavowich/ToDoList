@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.elipson.todolist.R
 import ru.elipson.todolist.domain.ToDoItem
@@ -21,11 +22,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val adapter = ToDoListAdapter()
+
         listLinearLayout = findViewById(R.id.toDoListLinearLayout)
+        val recyclerView = findViewById<RecyclerView>(R.id.toDoListRecyclerView)
 
         viewModel = ViewModelProvider(this)[ToDoListViewModel::class.java]
         viewModel.toDoListLiveData.observe(this) { list ->
-            showList(list)
+            adapter.updateList(list)
+            recyclerView.adapter = adapter
         }
 
         findViewById<FloatingActionButton>(R.id.addFab).setOnClickListener {

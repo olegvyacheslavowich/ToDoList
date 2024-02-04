@@ -18,6 +18,17 @@ object ToDoListRepositoryImpl : ToDoListRepository {
         add(ToDoItem("Book a table in a restaurant", "Book a table in a restaurant", true, Date()))
         add(ToDoItem("Wash a car", "Wash a car", false, Date()))
         add(ToDoItem("Sleep...", "Zzz", true, Date()))
+
+        for (i in 0..1000) {
+            add(
+                ToDoItem(
+                    name = "Test",
+                    description = "DEscription",
+                    enabled = false,
+                    day = Date()
+                )
+            )
+        }
     }
 
     override fun getListLiveData(): LiveData<List<ToDoItem>> = listLiveData
