@@ -13,7 +13,7 @@ object ToDoListRepositoryImpl : ToDoListRepository {
     private val listLiveData = MutableLiveData<List<ToDoItem>>()
 
     init {
-        add(ToDoItem("Clean a house",  "Clean a house", true, Date()))
+        add(ToDoItem("Clean a house", "Clean a house", true, Date()))
         add(ToDoItem("Buy products", "Buy products", false, Date()))
         add(ToDoItem("Book a table in a restaurant", "Book a table in a restaurant", true, Date()))
         add(ToDoItem("Wash a car", "Wash a car", false, Date()))
