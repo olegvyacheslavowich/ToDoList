@@ -17,59 +17,31 @@ import java.util.Date
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: ToDoListViewModel
-    private lateinit var listLinearLayout: LinearLayout
+    private lateinit var adapter: ToDoListAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val adapter = ToDoListAdapter()
-
-        listLinearLayout = findViewById(R.id.toDoListLinearLayout)
-        val recyclerView = findViewById<RecyclerView>(R.id.toDoListRecyclerView)
+        setupRecyclerView()
 
         viewModel = ViewModelProvider(this)[ToDoListViewModel::class.java]
         viewModel.toDoListLiveData.observe(this) { list ->
-            adapter.updateList(list)
-            recyclerView.adapter = adapter
-        }
-
-        findViewById<FloatingActionButton>(R.id.addFab).setOnClickListener {
-            viewModel.add(
-                ToDoItem(
-                    name = "Test",
-                    description = "DEscription",
-                    enabled = false,
-                    day = Date()
-                )
-            )
+            adapter.list = list
         }
     }
 
-    private fun showList(list: List<ToDoItem>) {
-
-        listLinearLayout.removeAllViews()
-        for (i in 0..100) {
-            list.forEach { item ->
-                val layoutId = if (item.enabled) {
-                    R.layout.item_todo_enabled
-                } else {
-                    R.layout.item_todo_disabled
-                }
-
-                val view =
-                    LayoutInflater.from(applicationContext)
-                        .inflate(layoutId, listLinearLayout, false)
-
-                val nameTextView = view.findViewById<TextView>(R.id.nameTextView)
-                val descriptionTextView = view.findViewById<TextView>(R.id.descriptionTextView)
-                val dateTextView = view.findViewById<TextView>(R.id.dateTextView)
-
-                nameTextView.text = item.name
-                descriptionTextView.text = item.description
-                dateTextView.text = item.day.time.toString()
-
-                listLinearLayout.addView(view)
-            }
-        }
+    private fun setupRecyclerView() {
+        val recyclerView = findViewById<RecyclerView>(R.id.toDoListRecyclerView)
+        adapter = ToDoListAdapter()
+        recyclerView.adapter = adapter
+        recyclerView.recycledViewPool.setMaxRecycledViews(
+            R.layout.item_todo_enabled,
+            ToDoListAdapter.MAX_POOL_SIZE
+        )
+        recyclerView.recycledViewPool.setMaxRecycledViews(
+            R.layout.item_todo_disabled,
+            ToDoListAdapter.MAX_POOL_SIZE
+        )
     }
 }

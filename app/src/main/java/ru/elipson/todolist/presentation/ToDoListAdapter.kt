@@ -5,36 +5,45 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import ru.elipson.todolist.R
 import ru.elipson.todolist.domain.ToDoItem
+import java.lang.RuntimeException
 
 class ToDoListAdapter : RecyclerView.Adapter<ToDoListAdapter.ToDoListViewHolder>() {
 
-    private val list = mutableListOf<ToDoItem>()
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoListViewHolder {
-        Log.i("ToDoListAdapter", "inflate")
+    var list = listOf<ToDoItem>()
+        set(value) {
+            field = value
+            // notifyDataSetChanged()
+        }
 
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_todo_enabled, parent, false)
-        return ToDoListViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoListViewHolder {
+
+        return ToDoListViewHolder(
+            LayoutInflater.from(parent.context).inflate(viewType, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: ToDoListViewHolder, position: Int) {
+        val item = list[position]
+        val status = if (item.enabled) "active" else "passive"
 
-        Log.i("ToDoListAdapter", "onBind")
+        holder.nameTextView.text = "${item.name}-$status"
+        holder.descriptionTextView.text = item.description
+        holder.dateTextView.text = item.day.time.toString()
 
-        holder.nameTextView.text = list[position].name
-        holder.descriptionTextView.text = list[position].description
-        holder.dateTextView.text = list[position].day.time.toString()
     }
+
+    override fun getItemViewType(position: Int): Int =
+        if (list[position].enabled) {
+            R.layout.item_todo_enabled
+        } else {
+            R.layout.item_todo_disabled
+        }
 
     override fun getItemCount(): Int = list.count()
-
-    fun updateList(newList: List<ToDoItem>) {
-        list.clear()
-        list.addAll(newList)
-    }
 
     class ToDoListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -43,13 +52,14 @@ class ToDoListAdapter : RecyclerView.Adapter<ToDoListAdapter.ToDoListViewHolder>
         var dateTextView: TextView
 
         init {
-            Log.i("ToDoListAdapter", "findViewById")
-            nameTextView = view.findViewById<TextView>(R.id.nameTextView)
-            descriptionTextView = view.findViewById<TextView>(R.id.descriptionTextView)
-            dateTextView = view.findViewById<TextView>(R.id.dateTextView)
+            nameTextView = view.findViewById(R.id.nameTextView)
+            descriptionTextView = view.findViewById(R.id.descriptionTextView)
+            dateTextView = view.findViewById(R.id.dateTextView)
         }
+    }
 
-
+    companion object {
+        const val MAX_POOL_SIZE = 15
     }
 
 }

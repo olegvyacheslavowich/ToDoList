@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import ru.elipson.todolist.domain.ToDoItem
 import ru.elipson.todolist.domain.ToDoListRepository
 import java.util.Date
+import java.util.Random
 
 object ToDoListRepositoryImpl : ToDoListRepository {
 
@@ -24,7 +25,7 @@ object ToDoListRepositoryImpl : ToDoListRepository {
                 ToDoItem(
                     name = "Test",
                     description = "DEscription",
-                    enabled = false,
+                    enabled = Random().nextBoolean(),
                     day = Date()
                 )
             )
