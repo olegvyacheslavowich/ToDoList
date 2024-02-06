@@ -3,21 +3,15 @@ package ru.elipson.todolist.presentation
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.elipson.todolist.R
-import ru.elipson.todolist.domain.ToDoItem
-import java.util.Date
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: ToDoListViewModel
-    private lateinit var adapter: ToDoListAdapter
+    private lateinit var toDoListAdapter: ToDoListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,14 +21,26 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[ToDoListViewModel::class.java]
         viewModel.toDoListLiveData.observe(this) { list ->
-            adapter.list = list
+            toDoListAdapter.list = list
         }
     }
 
     private fun setupRecyclerView() {
         val recyclerView = findViewById<RecyclerView>(R.id.toDoListRecyclerView)
-        adapter = ToDoListAdapter()
-        recyclerView.adapter = adapter
+        toDoListAdapter = ToDoListAdapter { item ->
+            viewModel.changeEnabled(item)
+        }
+        toDoListAdapter.onClickListener = {
+            Log.i("onClickLister", it.id.toString())
+        }
+
+        recyclerView.adapter = toDoListAdapter
+
+        setMaxRecyclerViews(recyclerView)
+        setupSwipeListener(recyclerView)
+    }
+
+    private fun setMaxRecyclerViews(recyclerView: RecyclerView) {
         recyclerView.recycledViewPool.setMaxRecycledViews(
             R.layout.item_todo_enabled,
             ToDoListAdapter.MAX_POOL_SIZE
@@ -43,5 +49,29 @@ class MainActivity : AppCompatActivity() {
             R.layout.item_todo_disabled,
             ToDoListAdapter.MAX_POOL_SIZE
         )
+    }
+
+    private fun setupSwipeListener(recyclerView: RecyclerView) {
+        val callback = object :
+            ItemTouchHelper.SimpleCallback(
+                0,
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+            ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val item = toDoListAdapter.list[viewHolder.adapterPosition]
+                viewModel.deleteToDoItem(item)
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(callback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 }

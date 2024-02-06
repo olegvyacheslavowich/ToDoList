@@ -2,21 +2,27 @@ package ru.elipson.todolist.presentation
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.elipson.todolist.R
 import ru.elipson.todolist.domain.ToDoItem
-import java.lang.RuntimeException
 
-class ToDoListAdapter : RecyclerView.Adapter<ToDoListAdapter.ToDoListViewHolder>() {
+class ToDoListAdapter(private val onLongClickListener: ((ToDoItem) -> Unit)?) :
+    RecyclerView.Adapter<ToDoListAdapter.ToDoListViewHolder>() {
+
+    var onClickListener: ((ToDoItem) -> Unit)? = null
+    var onSwipeListener: ((ToDoItem) -> Unit)? = null
 
     var list = listOf<ToDoItem>()
         set(value) {
+            val callback = ToDoListDiffCallback(list, value)
+            val diffResult = DiffUtil.calculateDiff(callback)
+            diffResult.dispatchUpdatesTo(this)
             field = value
-            // notifyDataSetChanged()
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoListViewHolder {
@@ -33,6 +39,15 @@ class ToDoListAdapter : RecyclerView.Adapter<ToDoListAdapter.ToDoListViewHolder>
         holder.nameTextView.text = "${item.name}-$status"
         holder.descriptionTextView.text = item.description
         holder.dateTextView.text = item.day.time.toString()
+
+        holder.itemView.setOnClickListener {
+            onClickListener?.invoke(item)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            onLongClickListener?.invoke(item)
+            true
+        }
 
     }
 
