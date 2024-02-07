@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ToDoList</string>
     <string name="add_new_to_do">Add new task</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="save_description">Save description</string>
 </resources>
