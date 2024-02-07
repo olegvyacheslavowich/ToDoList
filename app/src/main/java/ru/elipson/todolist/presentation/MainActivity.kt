@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[ToDoListViewModel::class.java]
         viewModel.toDoListLiveData.observe(this) { list ->
-            toDoListAdapter.list = list
+            toDoListAdapter.submitList(list)
         }
     }
 
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val item = toDoListAdapter.list[viewHolder.adapterPosition]
+                val item = toDoListAdapter.currentList[viewHolder.adapterPosition]
                 viewModel.deleteToDoItem(item)
             }
         }
