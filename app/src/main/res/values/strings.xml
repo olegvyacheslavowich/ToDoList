@@ -4,4 +4,6 @@
     <string name="name">Name</string>
     <string name="description">Description</string>
     <string name="save_description">Save description</string>
+    <string name="name_incorrect_error_message">Name is incorrect</string>
+    <string name="description_incorrect_error_message">Description is incorrect</string>
 </resources>

@@ -38,7 +38,10 @@ class ToDoItemViewModel : ViewModel() {
         val name = parseString(inputName)
         val description = parseString(inputDescription)
 
-        val fieldsValid = validateInputName(name) && validateInputDescription(description)
+        val nameIsValid = validateInputName(name)
+        val descriptionIsValid = validateInputDescription(description)
+
+        val fieldsValid = nameIsValid && descriptionIsValid
         if (fieldsValid) {
             val item = ToDoItem(
                 name = name,
@@ -94,7 +97,7 @@ class ToDoItemViewModel : ViewModel() {
         _errorInputDescriptionLiveData.value = false
     }
 
-    fun finishWork() {
+    private fun finishWork() {
         _shouldCloseScreenLiveData.value = Unit
     }
 

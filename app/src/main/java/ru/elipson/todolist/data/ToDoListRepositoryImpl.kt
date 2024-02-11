@@ -20,7 +20,7 @@ object ToDoListRepositoryImpl : ToDoListRepository {
         add(ToDoItem("Wash a car", "Wash a car", false, Date(), 3))
         add(ToDoItem("Sleep...", "Zzz", true, Date(), 4))
 
-        for (i in 5..1000) {
+        for (i in 5..10) {
             add(
                 ToDoItem(
                     id = i,
