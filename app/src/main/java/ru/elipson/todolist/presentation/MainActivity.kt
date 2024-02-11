@@ -1,11 +1,13 @@
 package ru.elipson.todolist.presentation
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.elipson.todolist.R
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +25,12 @@ class MainActivity : AppCompatActivity() {
         viewModel.toDoListLiveData.observe(this) { list ->
             toDoListAdapter.submitList(list)
         }
+
+        val buttonAddItem = findViewById<FloatingActionButton>(R.id.addFab)
+        buttonAddItem.setOnClickListener {
+            val intent = ToDoItemActivity.newIntentAddItem(this)
+            startActivity(intent)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -31,7 +39,8 @@ class MainActivity : AppCompatActivity() {
             viewModel.changeEnabled(item)
         }
         toDoListAdapter.onClickListener = {
-            Log.i("onClickLister", it.id.toString())
+            val intent = ToDoItemActivity.newIntentEditItem(this, it.id)
+            startActivity(intent)
         }
 
         recyclerView.adapter = toDoListAdapter
