@@ -1,7 +1,5 @@
 package ru.elipson.todolist.presentation
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -83,7 +81,7 @@ class ToDoItemFragment(
         }
 
         viewModel.shouldCloseScreenLiveData.observe(viewLifecycleOwner) {
-            //finish()
+            activity?.onBackPressedDispatcher?.onBackPressed()
         }
     }
 
@@ -145,23 +143,18 @@ class ToDoItemFragment(
     }
 
     companion object {
+
         private const val EXTRA_TO_DO_ITEM_ID = "extra_to_do_item_id"
         private const val EXTRA_SCREEN_MODE = "extra_mode"
         private const val EXTRA_SCREEN_MODE_EDIT = "mode_edit"
         private const val EXTRA_SCREEN_MODE_ADD = "mode_add"
         private const val MODE_UNKNOWN = ""
 
-        fun newIntentAddItem(context: Context) =
-            Intent(context, ToDoItemActivity::class.java)
-                .putExtra(
-                    EXTRA_SCREEN_MODE,
-                    EXTRA_SCREEN_MODE_ADD
-                )
+        fun instanceAddItem(): ToDoItemFragment = ToDoItemFragment(EXTRA_SCREEN_MODE_ADD)
 
-        fun newIntentEditItem(context: Context, id: Int) =
-            Intent(context, ToDoItemActivity::class.java)
-                .putExtra(EXTRA_SCREEN_MODE, EXTRA_SCREEN_MODE_EDIT)
-                .putExtra(EXTRA_TO_DO_ITEM_ID, id)
+        fun instanceChangeItem(id: Int): ToDoItemFragment =
+            ToDoItemFragment(EXTRA_SCREEN_MODE_EDIT, id)
+
     }
 
 
