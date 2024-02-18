@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -13,10 +14,7 @@ import com.google.android.material.textfield.TextInputLayout
 import ru.elipson.todolist.R
 import ru.elipson.todolist.domain.ToDoItem
 
-class ToDoItemFragment(
-    private val screenMode: String = MODE_UNKNOWN,
-    private val toDoItemId: Int = ToDoItem.UNDEFINED_ID
-) : Fragment() {
+class ToDoItemFragment : Fragment() {
 
     private lateinit var viewModel: ToDoItemViewModel
     private lateinit var nameTextInputLayout: TextInputLayout
@@ -25,6 +23,12 @@ class ToDoItemFragment(
     private lateinit var descriptionEditText: TextInputEditText
     private lateinit var saveFab: FloatingActionButton
 
+    private var screenMode: String = MODE_UNKNOWN
+    private var toDoItemId: Int = ToDoItem.UNDEFINED_ID
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        parseParams()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,7 +41,6 @@ class ToDoItemFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[ToDoItemViewModel::class.java]
-        parseParams()
         initViews(view)
         setMode()
         subscribeOnViewModel()
@@ -87,11 +90,11 @@ class ToDoItemFragment(
 
     private fun setMode() {
         when (screenMode) {
-            EXTRA_SCREEN_MODE_EDIT -> {
+            SCREEN_MODE_EDIT -> {
                 launchEditMode()
             }
 
-            EXTRA_SCREEN_MODE_ADD -> {
+            SCREEN_MODE_ADD -> {
                 launchAddMode()
             }
         }
@@ -125,12 +128,25 @@ class ToDoItemFragment(
     }
 
     private fun parseParams() {
-        if (screenMode != EXTRA_SCREEN_MODE_EDIT && screenMode != EXTRA_SCREEN_MODE_ADD) {
+        val args = requireArguments()
+
+        if (!args.containsKey(SCREEN_MODE)) {
             throw RuntimeException("Param screen mode is absent")
         }
 
-        if (screenMode == EXTRA_SCREEN_MODE_EDIT && toDoItemId == ToDoItem.UNDEFINED_ID) {
-            throw RuntimeException("Param show item id is absent")
+        val mode = args.getString(SCREEN_MODE)
+
+        if (mode != SCREEN_MODE_ADD && mode != SCREEN_MODE_EDIT) {
+            throw RuntimeException("Uknown screen mode: $mode")
+        }
+
+        screenMode = mode
+
+        if (screenMode == SCREEN_MODE_EDIT) {
+            if (!args.containsKey(TO_DO_ITEM_ID)) {
+                throw RuntimeException("Param show item id is absent")
+            }
+            toDoItemId = args.getInt(TO_DO_ITEM_ID, ToDoItem.UNDEFINED_ID)
         }
     }
 
@@ -144,17 +160,27 @@ class ToDoItemFragment(
 
     companion object {
 
-        private const val EXTRA_TO_DO_ITEM_ID = "extra_to_do_item_id"
-        private const val EXTRA_SCREEN_MODE = "extra_mode"
-        private const val EXTRA_SCREEN_MODE_EDIT = "mode_edit"
-        private const val EXTRA_SCREEN_MODE_ADD = "mode_add"
+        private const val TO_DO_ITEM_ID = "to_do_item_id"
+        private const val SCREEN_MODE = "mode"
+        private const val SCREEN_MODE_EDIT = "mode_edit"
+        private const val SCREEN_MODE_ADD = "mode_add"
         private const val MODE_UNKNOWN = ""
 
-        fun instanceAddItem(): ToDoItemFragment = ToDoItemFragment(EXTRA_SCREEN_MODE_ADD)
+        fun instanceAddItem(): ToDoItemFragment =
+            ToDoItemFragment().apply {
+                arguments = bundleOf(
+                    SCREEN_MODE to SCREEN_MODE_ADD
+                )
+            }
+
 
         fun instanceChangeItem(id: Int): ToDoItemFragment =
-            ToDoItemFragment(EXTRA_SCREEN_MODE_EDIT, id)
-
+            ToDoItemFragment().apply {
+                arguments = bundleOf(
+                    SCREEN_MODE to SCREEN_MODE_EDIT,
+                    TO_DO_ITEM_ID to id
+                )
+            }
     }
 
 
