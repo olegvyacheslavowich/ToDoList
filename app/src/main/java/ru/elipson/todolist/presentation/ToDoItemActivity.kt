@@ -17,20 +17,50 @@ import ru.elipson.todolist.domain.ToDoItem
 
 class ToDoItemActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: ToDoItemViewModel
-    private lateinit var nameTextInputLayout: TextInputLayout
-    private lateinit var nameEditText: TextInputEditText
-    private lateinit var descriptionTextInputLayout: TextInputLayout
-    private lateinit var descriptionEditText: TextInputEditText
-    private lateinit var saveFab: FloatingActionButton
 
     private var screenMode = MODE_UNKNOWN
     private var toDoItemId = ToDoItem.UNDEFINED_ID
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_to_do_item)
+        parseIntent()
+        launchRightMode()
+    }
 
+    private fun parseIntent() {
+        if (!intent.hasExtra(EXTRA_SCREEN_MODE)) {
+            throw RuntimeException("Param screen mode is absent")
+        }
+        val mode = intent.getStringExtra(EXTRA_SCREEN_MODE)
+        if (mode != EXTRA_SCREEN_MODE_ADD && mode != EXTRA_SCREEN_MODE_EDIT) {
+            throw RuntimeException("Unknown screen mode $mode")
+        }
+        screenMode = mode
 
+        if (screenMode == EXTRA_SCREEN_MODE_EDIT) {
+            if (!intent.hasExtra(EXTRA_TO_DO_ITEM_ID)) {
+                throw RuntimeException("Param show item id is absent")
+            }
+            toDoItemId = intent.getIntExtra(EXTRA_TO_DO_ITEM_ID, ToDoItem.UNDEFINED_ID)
+        }
+    }
+
+    private fun launchRightMode() {
+        val fragment = when (screenMode) {
+            EXTRA_SCREEN_MODE_EDIT -> {
+                ToDoItemFragment.instanceChangeItem(toDoItemId)
+            }
+
+            EXTRA_SCREEN_MODE_ADD -> {
+                ToDoItemFragment.instanceAddItem()
+            }
+
+            else -> {
+                throw RuntimeException("Unknown mode $screenMode")
+            }
+        }
+
+        supportFragmentManager.beginTransaction().add(R.id.toDoItemContainer, fragment).commit()
     }
 
     companion object {
