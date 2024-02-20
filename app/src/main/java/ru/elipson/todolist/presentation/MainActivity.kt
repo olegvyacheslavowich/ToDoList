@@ -38,28 +38,24 @@ class MainActivity : AppCompatActivity(), ToDoItemFragment.OnEditingFinishedList
     }
 
     private fun openToDoItemLandscapeFragment(item: ToDoItem? = null) {
-        val name: String
         val fragment = if (item == null) {
-            name = "add"
             ToDoItemFragment.instanceAddItem()
         } else {
-            name = "edit"
             ToDoItemFragment.instanceChangeItem(item.id)
         }
-        openFragment(fragment, name)
+        openFragment(fragment)
     }
 
-    private fun openFragment(fragment: Fragment, name: String) {
-        //supportFragmentManager.popBackStack()
+    private fun openFragment(fragment: Fragment) {
+        supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
             .replace(R.id.toDoItemLandscapeContainer, fragment)
-            .addToBackStack(name)
+            .addToBackStack(null)
             .commit()
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        supportFragmentManager.popBackStack("add", FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 
     private fun openToDoItemActivity(item: ToDoItem? = null) {
