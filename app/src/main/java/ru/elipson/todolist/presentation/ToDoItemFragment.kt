@@ -1,5 +1,6 @@
 package ru.elipson.todolist.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -26,9 +27,19 @@ class ToDoItemFragment : Fragment() {
 
     private var screenMode: String = MODE_UNKNOWN
     private var toDoItemId: Int = ToDoItem.UNDEFINED_ID
-    override fun onCreate(savedInstanceState: Bundle?)  {
+
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context !is OnEditingFinishedListener) {
+            throw  RuntimeException("Activity must implement OnEditingFinishedListener")
+        }
+        onEditingFinishedListener = context
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("debug_log", "ToDoItemFragment: onCreate")
         parseParams()
     }
 
@@ -86,7 +97,7 @@ class ToDoItemFragment : Fragment() {
         }
 
         viewModel.shouldCloseScreenLiveData.observe(viewLifecycleOwner) {
-            activity?.onBackPressedDispatcher?.onBackPressed()
+            onEditingFinishedListener?.onEditingFinished()
         }
     }
 
@@ -160,6 +171,10 @@ class ToDoItemFragment : Fragment() {
         saveFab = view.findViewById(R.id.saveFab)
     }
 
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
+    }
+
     companion object {
 
         private const val TO_DO_ITEM_ID = "to_do_item_id"
@@ -184,6 +199,5 @@ class ToDoItemFragment : Fragment() {
                 )
             }
     }
-
 
 }
