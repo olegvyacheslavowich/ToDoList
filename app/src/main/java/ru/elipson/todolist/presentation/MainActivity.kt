@@ -40,8 +40,11 @@ class MainActivity : AppCompatActivity() {
         } else {
             ToDoItemFragment.instanceChangeItem(item.id)
         }
+
+        supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
-            .add(R.id.toDoItemLandscapeContainer, fragment)
+            .replace(R.id.toDoItemLandscapeContainer, fragment)
+            .addToBackStack(null)
             .commit()
     }
 

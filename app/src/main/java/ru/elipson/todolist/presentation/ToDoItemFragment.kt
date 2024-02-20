@@ -1,6 +1,7 @@
 package ru.elipson.todolist.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,8 +26,9 @@ class ToDoItemFragment : Fragment() {
 
     private var screenMode: String = MODE_UNKNOWN
     private var toDoItemId: Int = ToDoItem.UNDEFINED_ID
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)  {
         super.onCreate(savedInstanceState)
+        Log.d("debug_log", "ToDoItemFragment: onCreate")
         parseParams()
     }
 

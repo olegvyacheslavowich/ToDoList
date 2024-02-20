@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -22,9 +23,12 @@ class ToDoItemActivity : AppCompatActivity() {
     private var toDoItemId = ToDoItem.UNDEFINED_ID
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("debug_log", "ToDoItemActivity: onCreate")
         setContentView(R.layout.activity_to_do_item)
         parseIntent()
-        launchRightMode()
+        if (savedInstanceState == null) {
+            launchRightMode()
+        }
     }
 
     private fun parseIntent() {
@@ -60,7 +64,11 @@ class ToDoItemActivity : AppCompatActivity() {
             }
         }
 
-        supportFragmentManager.beginTransaction().add(R.id.toDoItemContainer, fragment).commit()
+        // supportFragmentManager.popBackStack()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.toDoItemContainer, fragment)
+            .commit()
     }
 
     companion object {
