@@ -2,7 +2,9 @@ package ru.elipson.todolist.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -35,14 +37,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openToDoItemLandscapeFragment(item: ToDoItem? = null) {
+        val name: String
         val fragment = if (item == null) {
+            name = "add"
             ToDoItemFragment.instanceAddItem()
         } else {
+            name = "edit"
             ToDoItemFragment.instanceChangeItem(item.id)
         }
+        openFragment(fragment, name)
+    }
+
+    private fun openFragment(fragment: Fragment, name: String) {
+        //supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
-            .add(R.id.toDoItemLandscapeContainer, fragment)
+            .replace(R.id.toDoItemLandscapeContainer, fragment)
+            .addToBackStack(name)
             .commit()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        supportFragmentManager.popBackStack("add", FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 
     private fun openToDoItemActivity(item: ToDoItem? = null) {
