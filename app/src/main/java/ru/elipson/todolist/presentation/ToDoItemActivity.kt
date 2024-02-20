@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +17,7 @@ import com.google.android.material.textfield.TextInputLayout
 import ru.elipson.todolist.R
 import ru.elipson.todolist.domain.ToDoItem
 
-class ToDoItemActivity : AppCompatActivity() {
+class ToDoItemActivity : AppCompatActivity(), ToDoItemFragment.OnEditingFinishedListener {
 
 
     private var screenMode = MODE_UNKNOWN
@@ -89,5 +90,10 @@ class ToDoItemActivity : AppCompatActivity() {
             Intent(context, ToDoItemActivity::class.java)
                 .putExtra(EXTRA_SCREEN_MODE, EXTRA_SCREEN_MODE_EDIT)
                 .putExtra(EXTRA_TO_DO_ITEM_ID, id)
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this, "GOOD JOB", Toast.LENGTH_LONG).show()
+        finish()
     }
 }

@@ -1,6 +1,7 @@
 package ru.elipson.todolist.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
@@ -12,7 +13,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.elipson.todolist.R
 import ru.elipson.todolist.domain.ToDoItem
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ToDoItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: ToDoListViewModel
     private lateinit var toDoListAdapter: ToDoListAdapter
@@ -37,28 +38,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openToDoItemLandscapeFragment(item: ToDoItem? = null) {
-        val name: String
         val fragment = if (item == null) {
-            name = "add"
             ToDoItemFragment.instanceAddItem()
         } else {
-            name = "edit"
             ToDoItemFragment.instanceChangeItem(item.id)
         }
-        openFragment(fragment, name)
+        openFragment(fragment)
     }
 
-    private fun openFragment(fragment: Fragment, name: String) {
-        //supportFragmentManager.popBackStack()
+    private fun openFragment(fragment: Fragment) {
+        supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
             .replace(R.id.toDoItemLandscapeContainer, fragment)
-            .addToBackStack(name)
+            .addToBackStack(null)
             .commit()
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        supportFragmentManager.popBackStack("add", FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 
     private fun openToDoItemActivity(item: ToDoItem? = null) {
@@ -129,5 +126,10 @@ class MainActivity : AppCompatActivity() {
 
         val itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this, "SUCCESS", Toast.LENGTH_LONG).show()
+        supportFragmentManager.popBackStack()
     }
 }
