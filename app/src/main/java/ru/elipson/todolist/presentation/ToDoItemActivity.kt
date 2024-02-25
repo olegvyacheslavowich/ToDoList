@@ -30,6 +30,32 @@ class ToDoItemActivity : AppCompatActivity(), ToDoItemFragment.OnEditingFinished
         if (savedInstanceState == null) {
             launchRightMode()
         }
+        Log.d("view lifecycle", "ToDoItemActivity: {onCreate}")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("view lifecycle", "ToDoItemActivity: {onStart}")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("view lifecycle", "ToDoItemActivity: {onResume}")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("view lifecycle", "ToDoItemActivity: {onPause}")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("view lifecycle", "ToDoItemActivity: {onStop}")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("view lifecycle", "ToDoItemActivity: {onDestroy}")
     }
 
     private fun parseIntent() {

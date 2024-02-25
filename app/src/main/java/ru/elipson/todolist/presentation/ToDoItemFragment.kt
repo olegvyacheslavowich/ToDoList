@@ -15,8 +15,11 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import ru.elipson.todolist.R
 import ru.elipson.todolist.domain.ToDoItem
+import kotlin.random.Random
 
 class ToDoItemFragment : Fragment() {
+
+    private val id = Random.nextInt()
 
     private lateinit var viewModel: ToDoItemViewModel
     private lateinit var nameTextInputLayout: TextInputLayout
@@ -33,14 +36,17 @@ class ToDoItemFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context !is OnEditingFinishedListener) {
-            throw  RuntimeException("Activity must implement OnEditingFinishedListener")
+            throw RuntimeException("Activity must implement OnEditingFinishedListener")
         }
         onEditingFinishedListener = context
+        Log.d("view lifecycle", "ToDoItemFragment{$id}: {onAttach}")
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseParams()
+        Log.d("view lifecycle", "ToDoItemFragment{$id}: {onCreate}")
     }
 
     override fun onCreateView(
@@ -48,6 +54,7 @@ class ToDoItemFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("view lifecycle", "ToDoItemFragment{$id}: {onCreateView}")
         return inflater.inflate(R.layout.fragment_to_do_item, container, false)
     }
 
@@ -58,6 +65,44 @@ class ToDoItemFragment : Fragment() {
         setMode()
         subscribeOnViewModel()
         addTextChangeListeners()
+        Log.d("view lifecycle", "ToDoItemFragment{$id}: {onViewCreated}")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("view lifecycle", "ToDoItemFragment{$id}: {onStart}")
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("view lifecycle", "ToDoItemFragment{$id}: {onResume}")
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("view lifecycle", "ToDoItemFragment{$id}: {onPause}")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("view lifecycle", "ToDoItemFragment{$id}: {onStop}")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d("view lifecycle", "ToDoItemFragment{$id}: {onDestroyView}")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("view lifecycle", "ToDoItemFragment{$id}: {onDestroy}")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.d("view lifecycle", "ToDoItemFragment{$id}: {onDetach}")
     }
 
     private fun addTextChangeListeners() {
