@@ -4,9 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.elipson.todolist.R
+import ru.elipson.todolist.databinding.ItemTodoDisabledBinding
+import ru.elipson.todolist.databinding.ItemTodoEnabledBinding
 import ru.elipson.todolist.domain.ToDoItem
 
 class ToDoListAdapter(private val onLongClickListener: ((ToDoItem) -> Unit)?) :
@@ -17,24 +21,38 @@ class ToDoListAdapter(private val onLongClickListener: ((ToDoItem) -> Unit)?) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoListViewHolder {
 
-        return ToDoListViewHolder(
-            LayoutInflater.from(parent.context).inflate(viewType, parent, false)
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(
+            LayoutInflater.from(parent.context),
+            viewType,
+            parent,
+            false
         )
+        return ToDoListViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ToDoListViewHolder, position: Int) {
         val item = getItem(position)
+        val binding = holder.binding
         val status = if (item.enabled) "active" else "passive"
+        when (binding) {
+            is ItemTodoEnabledBinding -> {
+                binding.nameTextView.text = "${item.name}-$status"
+                binding.descriptionTextView.text = item.description
+                binding.dateTextView.text = item.day.time.toString()
+            }
 
-        holder.nameTextView.text = "${item.name}-$status"
-        holder.descriptionTextView.text = item.description
-        holder.dateTextView.text = item.day.time.toString()
+            is ItemTodoDisabledBinding -> {
+                binding.nameTextView.text = "${item.name}-$status"
+                binding.descriptionTextView.text = item.description
+                binding.dateTextView.text = item.day.time.toString()
+            }
+        }
 
-        holder.itemView.setOnClickListener {
+        binding.root.setOnClickListener {
             onClickListener?.invoke(item)
         }
 
-        holder.itemView.setOnLongClickListener {
+        binding.root.setOnLongClickListener {
             onLongClickListener?.invoke(item)
             true
         }
