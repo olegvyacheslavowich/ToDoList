@@ -5,12 +5,12 @@ import androidx.lifecycle.LiveData
 interface ToDoListRepository {
 
     fun getListLiveData(): LiveData<List<ToDoItem>>
-    fun get(id: Int): ToDoItem?
+    suspend fun get(id: Int): ToDoItem?
 
-    fun delete(item: ToDoItem)
+    suspend fun delete(item: ToDoItem)
 
-    fun edit(item: ToDoItem)
+    suspend fun edit(item: ToDoItem)
 
-    fun add(item: ToDoItem)
+    suspend fun add(item: ToDoItem)
 
 }

@@ -18,20 +18,20 @@ class ToDoListRepositoryImpl(application: Application) : ToDoListRepository {
         mapper.mapListDbModelToEntity(it)
     }
 
-    override fun get(id: Int): ToDoItem {
+    override suspend fun get(id: Int): ToDoItem {
         val dbModel = dao.getToDoItem(id)
         return mapper.mapDbModelToEntity(dbModel)
     }
 
-    override fun delete(item: ToDoItem) {
+    override suspend fun delete(item: ToDoItem) {
         dao.deleteToDoItem(item.id)
     }
 
-    override fun edit(item: ToDoItem) {
+    override suspend fun edit(item: ToDoItem) {
         dao.addToDoItem(mapper.mapEntityToDbModel(item))
     }
 
-    override fun add(item: ToDoItem) {
+    override suspend fun add(item: ToDoItem) {
         dao.addToDoItem(mapper.mapEntityToDbModel(item))
     }
 

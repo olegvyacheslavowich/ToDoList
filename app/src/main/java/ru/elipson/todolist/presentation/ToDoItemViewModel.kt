@@ -1,8 +1,15 @@
 package ru.elipson.todolist.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import ru.elipson.todolist.data.ToDoListRepositoryImpl
 import ru.elipson.todolist.domain.AddToDoItemUseCase
 import ru.elipson.todolist.domain.EditToDoItemUseCase
@@ -10,9 +17,9 @@ import ru.elipson.todolist.domain.GetToDoItemUseCase
 import ru.elipson.todolist.domain.ToDoItem
 import java.util.Date
 
-class ToDoItemViewModel : ViewModel() {
+class ToDoItemViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = ToDoListRepositoryImpl
+    private val repository = ToDoListRepositoryImpl(application)
 
     private val addToDoItemUseCase = AddToDoItemUseCase(repository)
     private val getToDoItemUseCase = GetToDoItemUseCase(repository)
@@ -30,8 +37,12 @@ class ToDoItemViewModel : ViewModel() {
     private val _errorInputDescriptionLiveData = MutableLiveData<Boolean>()
     val errorInputDescriptionLiveData: LiveData<Boolean> get() = _errorInputDescriptionLiveData
     fun getToDoItem(id: Int) {
-        val item = getToDoItemUseCase.getToDoItem(id)
-        _toDoItemLiveData.value = item
+        viewModelScope.launch {
+            getToDoItemUseCase.getToDoItem(id)?.let {
+                _toDoItemLiveData.postValue(it)
+            }
+        }
+
     }
 
     fun addToDoItem(inputName: String?, inputDescription: String?) {
@@ -49,8 +60,10 @@ class ToDoItemViewModel : ViewModel() {
                 enabled = false,
                 day = Date()
             )
-            addToDoItemUseCase.addToDoItem(item)
-            finishWork()
+            viewModelScope.launch {
+                addToDoItemUseCase.addToDoItem(item)
+                finishWork()
+            }
         }
     }
 
@@ -67,8 +80,10 @@ class ToDoItemViewModel : ViewModel() {
                     enabled = false,
                     day = Date()
                 )
-                editToDoItemUseCase.editToDoItem(item)
-                finishWork()
+                viewModelScope.launch {
+                    editToDoItemUseCase.editToDoItem(item)
+                    finishWork()
+                }
             }
         }
     }
@@ -98,7 +113,6 @@ class ToDoItemViewModel : ViewModel() {
     }
 
     private fun finishWork() {
-        _shouldCloseScreenLiveData.value = Unit
+        _shouldCloseScreenLiveData.postValue(Unit)
     }
-
 }

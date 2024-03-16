@@ -1,6 +1,7 @@
 package ru.elipson.todolist.data
 
 import ru.elipson.todolist.domain.ToDoItem
+import java.util.Date
 
 class ShopListMapper {
 
@@ -10,7 +11,7 @@ class ShopListMapper {
             name = entity.name,
             description = entity.description,
             enabled = entity.enabled,
-            day = entity.day
+            day = entity.day.time
         )
 
     fun mapDbModelToEntity(dbModel: ToDoItemDbModel): ToDoItem =
@@ -19,7 +20,7 @@ class ShopListMapper {
             name = dbModel.name,
             description = dbModel.description,
             enabled = dbModel.enabled,
-            day = dbModel.day
+            day = Date(dbModel.day)
         )
 
     fun mapListEntityToDbModel(entityList: List<ToDoItem>): List<ToDoItemDbModel> =
@@ -29,7 +30,7 @@ class ShopListMapper {
                 name = it.name,
                 description = it.description,
                 enabled = it.enabled,
-                day = it.day
+                day = it.day.time
             )
         }
 
@@ -40,7 +41,7 @@ class ShopListMapper {
                 name = it.name,
                 description = it.description,
                 enabled = it.enabled,
-                day = it.day
+                day = Date(it.day)
             )
         }
 
