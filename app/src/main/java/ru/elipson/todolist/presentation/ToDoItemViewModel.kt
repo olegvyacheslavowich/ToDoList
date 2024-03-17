@@ -25,6 +25,7 @@ class ToDoItemViewModel(application: Application) : AndroidViewModel(application
     private val getToDoItemUseCase = GetToDoItemUseCase(repository)
     private val editToDoItemUseCase = EditToDoItemUseCase(repository)
 
+
     private val _shouldCloseScreenLiveData = MutableLiveData<Unit>()
     val shouldCloseScreenLiveData: LiveData<Unit> get() = _shouldCloseScreenLiveData
 
@@ -39,10 +40,9 @@ class ToDoItemViewModel(application: Application) : AndroidViewModel(application
     fun getToDoItem(id: Int) {
         viewModelScope.launch {
             getToDoItemUseCase.getToDoItem(id)?.let {
-                _toDoItemLiveData.postValue(it)
+                _toDoItemLiveData.value = it
             }
         }
-
     }
 
     fun addToDoItem(inputName: String?, inputDescription: String?) {
