@@ -245,4 +245,8 @@ class ToDoItemFragment : Fragment() {
             }
     }
 
+    fun loadCoinDetails () {
+
+    }
+
 }
