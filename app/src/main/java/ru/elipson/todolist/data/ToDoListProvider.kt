@@ -1,20 +1,24 @@
 package ru.elipson.todolist.data
 
+import android.app.Application
 import android.content.ContentProvider
 import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
-import androidx.core.content.UriMatcherCompat
+import android.util.Log
 
 class ToDoListProvider : ContentProvider() {
 
+    private lateinit var db: AppDatabase
     private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
-        //addURI()
+        addURI("ru.elipson.todolist", TO_DO_LIST_TABLE, TO_DO_LIST_TABLE_CODE)
+        addURI("ru.elipson.todolist", TO_DO_LIST_TABLE_BY_ID, TO_DO_LIST_TABLE_BY_ID_CODE)
     }
 
     override fun onCreate(): Boolean {
-        TODO("Not yet implemented")
+        db = AppDatabase.getInstance(context as Application)
+        return false
     }
 
     override fun query(
@@ -24,19 +28,35 @@ class ToDoListProvider : ContentProvider() {
         selectionArgs: Array<out String>?,
         sortOrder: String?
     ): Cursor? {
-        TODO("Not yet implemented")
+        val code = uriMatcher.match(uri)
+        when (code) {
+            TO_DO_LIST_TABLE_CODE -> {
+                return db.getToDoItemsDao().getToDoItemsListCursor()
+            }
+
+            TO_DO_LIST_TABLE_BY_ID_CODE -> {
+                Log.d("ToDoListProvider", "matched")
+                Log.d("ToDoListProvider", "query $uri")
+                return null
+            }
+
+            else -> {
+                Log.d("ToDoListProvider", "query $uri")
+                return null
+            }
+        }
     }
 
     override fun getType(uri: Uri): String? {
-        TODO("Not yet implemented")
+        return null
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        TODO("Not yet implemented")
+        return null
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
-        TODO("Not yet implemented")
+        return 0
     }
 
     override fun update(
@@ -45,6 +65,14 @@ class ToDoListProvider : ContentProvider() {
         selection: String?,
         selectionArgs: Array<out String>?
     ): Int {
-        TODO("Not yet implemented")
+        return 0
     }
+
+    companion object {
+        private const val TO_DO_LIST_TABLE = "to_do_list"
+        private const val TO_DO_LIST_TABLE_BY_ID = "to_do_list/#"
+        private const val TO_DO_LIST_TABLE_CODE = 100
+        private const val TO_DO_LIST_TABLE_BY_ID_CODE = 101
+    }
+
 }

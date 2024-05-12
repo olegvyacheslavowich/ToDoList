@@ -1,19 +1,23 @@
 package ru.elipson.todolist.presentation
 
-import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import ru.elipson.todolist.R
 import ru.elipson.todolist.domain.ToDoItem
+import java.util.Date
 
 class MainActivity : AppCompatActivity(), ToDoItemFragment.OnEditingFinishedListener {
 
@@ -40,6 +44,26 @@ class MainActivity : AppCompatActivity(), ToDoItemFragment.OnEditingFinishedList
         buttonAddItem.setOnClickListener {
             openToDoItem()
         }
+        CoroutineScope(Dispatchers.IO).launch {
+            val cursor = contentResolver.query(
+                Uri.parse("content://ru.elipson.todolist/to_do_list"),
+                null, null, null, null
+            )
+
+            while (cursor?.moveToNext() == true) {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
+                val description = cursor.getString(cursor.getColumnIndexOrThrow("description"))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+
+                val toDoItem = ToDoItem(name, description, enabled, Date(), id)
+
+                Log.d("MainActivity", toDoItem.toString())
+            }
+
+            cursor?.close()
+        }
+
     }
 
     override fun onStart() {

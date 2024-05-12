@@ -1,5 +1,6 @@
 package ru.elipson.todolist.data
 
+import android.database.Cursor
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
@@ -13,6 +14,9 @@ interface ToDoListDao {
 
     @Query("SELECT * FROM to_do_item")
     fun getToDoItemsList(): LiveData<List<ToDoItemDbModel>>
+
+    @Query("SELECT * FROM to_do_item")
+    fun getToDoItemsListCursor(): Cursor
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addToDoItem(toDoItemDbModel: ToDoItemDbModel)
