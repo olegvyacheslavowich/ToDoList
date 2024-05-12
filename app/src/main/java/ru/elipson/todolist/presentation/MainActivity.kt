@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), ToDoItemFragment.OnEditingFinishedList
             openToDoItem()
         }
         CoroutineScope(Dispatchers.IO).launch {
-            val cursor = contentResolver.query(
+            var cursor = contentResolver.query(
                 Uri.parse("content://ru.elipson.todolist/to_do_list"),
                 null, null, null, null
             )
@@ -62,6 +62,11 @@ class MainActivity : AppCompatActivity(), ToDoItemFragment.OnEditingFinishedList
             }
 
             cursor?.close()
+
+            cursor = contentResolver.query(
+                Uri.parse("content://ru.elipson.todolist/to_do_list/3"),
+                null, null, null, null
+            )
         }
 
     }
